@@ -53,14 +53,14 @@ class PageController extends Controller
 		public function actionView($title)
 		{
 				$model = Page::model()->find(
-												array(
-														'condition'     => 'title=:title',
-														'order'                 => 'revision DESC',
-														'params'                => array(
-																								':title' => $title
-														)
-												)
-										);
+					array(
+						'condition'     => 'title=:title',
+						'order'                 => 'revision DESC',
+						'params'                => array(
+							':title' => $title
+						)
+					)
+				);
  
 				if( $model )
 				{
@@ -68,7 +68,7 @@ class PageController extends Controller
 				}
 				else
 				{
-						throw new CHttpException( 404, 'Upsz! Hat ezt az oldalt nem talaltuk :/' );
+					throw new CHttpException( 404, 'Upsz! Hat ezt az oldalt nem talaltuk :/' );
 				}
 		}
  
@@ -78,23 +78,23 @@ class PageController extends Controller
 		 */
 		public function actionCreate()
 		{
-				$model=new Page;
- 
-				// Uncomment the following line if AJAX validation is needed
-				// $this->performAjaxValidation($model);
- 
-				if(isset($_POST['Page']))
+			$model=new Page;
+
+			// Uncomment the following line if AJAX validation is needed
+			// $this->performAjaxValidation($model);
+
+			if(isset($_POST['Page']))
+			{
+				$model->attributes=$_POST['Page'];
+				if($model->save())
 				{
-						$model->attributes=$_POST['Page'];
-						if($model->save())
-						{
-								$this->redirect(array('view','title'=>$model->title));
-						}
+					$this->redirect(array('view','title'=>$model->title));
 				}
- 
-				$this->render('create',array(
-						'model'=>$model,
-				));
+			}
+
+			$this->render('create',array(
+				'model'=>$model,
+			));
 		}
  
 		/**
@@ -104,29 +104,29 @@ class PageController extends Controller
 		 */
 		public function actionUpdate($title)
 		{
-				$model = Page::model()->find(
-						array(
-								'condition'     => 'title=:title',
-								'order'                 => 'revision DESC',
-								'params'                => array(
-																		':title' => $title
-								)
-						)
-				);
- 
-				// Uncomment the following line if AJAX validation is needed
-				// $this->performAjaxValidation($model);
- 
-				if(isset($_POST['Page']))
-				{
-						$model->attributes=$_POST['Page'];
-						if($model->save())
-								$this->redirect(array('view','title'=>$model->title));
-				}
- 
-				$this->render('update',array(
-						'model'=>$model,
-				));
+			$model = Page::model()->find(
+				array(
+					'condition'     => 'title=:title',
+					'order'                 => 'revision DESC',
+					'params'                => array(
+						':title' => $title
+					)
+				)
+			);
+
+			// Uncomment the following line if AJAX validation is needed
+			// $this->performAjaxValidation($model);
+
+			if(isset($_POST['Page']))
+			{
+				$model->attributes=$_POST['Page'];
+				if($model->save())
+					$this->redirect(array('view','title'=>$model->title));
+			}
+
+			$this->render('update',array(
+				'model'=>$model,
+			));
 		}
  
 		/**
@@ -137,34 +137,34 @@ class PageController extends Controller
 		public function actionDelete( $title )
 		{
 			   
-				if(Yii::app()->request->isPostRequest)
-				{
-						// FONTOS!
-						// az `admin` reszt magat kiszedtuk
-						// ezert a delete-t funkciot kicsit atirtuk
-						Page::model()->deleteAll( 'title=:title', array( ':title' => $title ) );
-						$this->redirect( $this->createUrl( '/page/index' ) );
-				}
-				else
-						throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+			if(Yii::app()->request->isPostRequest)
+			{
+				// FONTOS!
+				// az `admin` reszt magat kiszedtuk
+				// ezert a delete-t funkciot kicsit atirtuk
+				Page::model()->deleteAll( 'title=:title', array( ':title' => $title ) );
+				$this->redirect( $this->createUrl( '/page/index' ) );
+			}
+			else
+				throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 		}
  
 		public function actionIndex()
 		{
-						$criteria = new CDbCriteria();
-						$criteria->group = 'title';
-						$criteria->order = 'created DESC';
- 
-						$dataProvider=new CActiveDataProvider('Page', array(
-																		'pagination'=>array(
-																						'pageSize'=>self::PAGE_SIZE,
-																						),
-																		'criteria' => $criteria,
-																		));
- 
-						$this->render('index',array(
-																		'dataProvider'=>$dataProvider,
-																		));
+			$criteria = new CDbCriteria();
+			$criteria->group = 'title';
+			$criteria->order = 'created DESC';
+
+			$dataProvider=new CActiveDataProvider('Page', array(
+				'pagination'=>array(
+					'pageSize'=>self::PAGE_SIZE,
+				),
+				'criteria' => $criteria,
+			));
+
+			$this->render('index',array(
+				'dataProvider'=>$dataProvider,
+			));
 		}
  
 		/**
