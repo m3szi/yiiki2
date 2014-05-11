@@ -29,6 +29,12 @@ class Page extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('revision, created', 'numerical', 'integerOnly'=>true),
+			array( 'title', 'required', 'message' => 'Ejnye! Cím nem lehet üres!' ),
+			array( 'title', 'unique' ),
+			array('title',
+				'match',
+				'pattern'=>'/^[A-Za-z0-9_]+$/',
+				'message' => 'Jajj! Csak számokat, betűket és `_` jelet használhatsz! Bocsi' ),
 			array('title', 'length', 'max'=>125),
 			array('body', 'safe'),
 			// The following rule is used by search().
@@ -90,6 +96,34 @@ class Page extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	public function beforeSave()
+    {
+       // allitsuk be a datumot
+       $this->created=time();
+     
+       return parent::beforeSave();
+    }
+	
+	public function save( $validate = true, $attributes = NULL )
+    {
+        if( $this->isNewRecord )
+        {
+            // noveljuk a verzio-szamot ...
+            $this->revision = $this->revision+1;
+            return parent::save( $validate );
+        }
+        else
+        {
+            // ha a save fuggvenyt false-kent hivjuk meg
+            // akkor a modell atugorja az ellenorzest igy nem kell a
+            // a title egyenisegevel bajlodnunk, es igy noveljuk a verzio szamot
+            $newpage = new Page();
+            $newpage->attributes = $this->attributes;
+            $newpage->save(false);
+            return true;
+        }
+    }
 
 	/**
 	 * Returns the static model of the specified AR class.
